@@ -1,8 +1,8 @@
 
-import CodeCanvas from "@/components/CodeCanvas";
+import HomePage from "./HomePage";
 
 const Index = () => {
-  return <CodeCanvas />;
+  return <HomePage />;
 };
 
 export default Index;
