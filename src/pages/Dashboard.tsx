@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
-import { Project, UserRole, ProjectWithDetails } from "@/types";
+import { Project, UserRole, ProjectWithDetails, Profile } from "@/types";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { 
@@ -49,7 +49,7 @@ const Dashboard = () => {
           throw error;
         }
 
-        setProjects(data || []);
+        setProjects(data as ProjectWithDetails[] || []);
       } catch (error: any) {
         toast({
           title: "Error fetching projects",
@@ -103,7 +103,7 @@ const Dashboard = () => {
                 .single()
                 .then(({ data }) => {
                   if (data) {
-                    setProjects(prev => [data, ...prev]);
+                    setProjects(prev => [data as ProjectWithDetails, ...prev]);
                   }
                 });
             }
@@ -139,7 +139,7 @@ const Dashboard = () => {
       case "in_progress":
         return <Badge variant="default">In Progress</Badge>;
       case "completed":
-        return <Badge variant="success">Completed</Badge>;
+        return <Badge variant="outline">Completed</Badge>;
       case "cancelled":
         return <Badge variant="destructive">Cancelled</Badge>;
       default:

@@ -2,7 +2,7 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { Session } from "@/types";
+import { Session, Profile } from "@/types";
 
 interface AuthContextType {
   session: Session | null;
@@ -32,7 +32,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
           setSession({
             user: currentSession.user,
-            profile
+            profile: profile as Profile
           });
         } else {
           setSession(null);
@@ -52,7 +52,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
         setSession({
           user: currentSession.user,
-          profile
+          profile: profile as Profile
         });
       }
       setLoading(false);
