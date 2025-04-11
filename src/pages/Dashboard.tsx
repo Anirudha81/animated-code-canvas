@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -46,14 +47,47 @@ const Dashboard = () => {
           throw error;
         }
 
-        // Convert the data to ProjectWithDetails type - without client and contractor for now
-        const projectsData = data.map((project: any) => ({
-          ...project,
-          client: undefined,
-          contractor: undefined
-        })) as ProjectWithDetails[];
+        // Fetch client and contractor profiles for the projects
+        const projectsWithDetails: ProjectWithDetails[] = await Promise.all(
+          (data || []).map(async (project: Project) => {
+            let clientProfile: Profile | undefined;
+            let contractorProfile: Profile | undefined;
 
-        setProjects(projectsData || []);
+            // Fetch client profile if client_id exists
+            if (project.client_id) {
+              const { data: clientData, error: clientError } = await supabase
+                .from('profiles')
+                .select('*')
+                .eq('id', project.client_id)
+                .single();
+              
+              if (!clientError && clientData) {
+                clientProfile = clientData as Profile;
+              }
+            }
+
+            // Fetch contractor profile if contractor_id exists
+            if (project.contractor_id) {
+              const { data: contractorData, error: contractorError } = await supabase
+                .from('profiles')
+                .select('*')
+                .eq('id', project.contractor_id)
+                .single();
+              
+              if (!contractorError && contractorData) {
+                contractorProfile = contractorData as Profile;
+              }
+            }
+
+            return {
+              ...project,
+              client: clientProfile,
+              contractor: contractorProfile
+            } as ProjectWithDetails;
+          })
+        );
+
+        setProjects(projectsWithDetails || []);
       } catch (error: any) {
         toast({
           title: "Error fetching projects",
