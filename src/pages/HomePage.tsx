@@ -4,6 +4,7 @@ import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
 import InquireForm from "@/components/InquireForm";
 import Footer from "@/components/Footer";
+import ProjectsList from "@/components/ProjectsList";
 import { motion } from "framer-motion";
 
 const HomePage = () => {
@@ -51,6 +52,16 @@ const HomePage = () => {
             </div>
           </div>
         </div>
+      </motion.section>
+      
+      <motion.section 
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        transition={{ duration: 0.8 }}
+        viewport={{ once: true }}
+        className="container mx-auto px-4 py-20"
+      >
+        <ProjectsList />
       </motion.section>
       
       <motion.section 
