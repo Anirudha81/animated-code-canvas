@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -30,9 +29,7 @@ const Dashboard = () => {
     const fetchProjects = async () => {
       try {
         let query = supabase.from("projects").select(`
-          *,
-          client:profiles!projects_client_id_fkey(*),
-          contractor:profiles!projects_contractor_id_fkey(*)
+          *
         `);
 
         // Apply role-based filtering
@@ -49,7 +46,14 @@ const Dashboard = () => {
           throw error;
         }
 
-        setProjects(data as ProjectWithDetails[] || []);
+        // Convert the data to ProjectWithDetails type - without client and contractor for now
+        const projectsData = data.map((project: any) => ({
+          ...project,
+          client: undefined,
+          contractor: undefined
+        })) as ProjectWithDetails[];
+
+        setProjects(projectsData || []);
       } catch (error: any) {
         toast({
           title: "Error fetching projects",
@@ -91,21 +95,14 @@ const Dashboard = () => {
               (userRole === "client" && newProject.client_id === session.user.id) ||
               (userRole === "contractor" && newProject.contractor_id === session.user.id)
             ) {
-              // Fetch the complete project with relations
-              supabase
-                .from("projects")
-                .select(`
-                  *,
-                  client:profiles!projects_client_id_fkey(*),
-                  contractor:profiles!projects_contractor_id_fkey(*)
-                `)
-                .eq("id", newProject.id)
-                .single()
-                .then(({ data }) => {
-                  if (data) {
-                    setProjects(prev => [data as ProjectWithDetails, ...prev]);
-                  }
-                });
+              // Add the new project to the list with empty relations
+              const newProjectWithDetails: ProjectWithDetails = {
+                ...newProject,
+                client: undefined,
+                contractor: undefined
+              };
+              
+              setProjects(prev => [newProjectWithDetails, ...prev]);
             }
           } else if (payload.eventType === "UPDATE") {
             const updatedProject = payload.new as Project;

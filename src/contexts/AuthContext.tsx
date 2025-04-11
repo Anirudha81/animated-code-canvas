@@ -24,16 +24,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, currentSession) => {
         if (currentSession) {
-          const { data: profile } = await supabase
-            .from('profiles')
-            .select('*')
-            .eq('id', currentSession.user.id)
-            .single();
+          try {
+            const { data: profile, error } = await supabase
+              .from('profiles')
+              .select('*')
+              .eq('id', currentSession.user.id)
+              .single();
 
-          setSession({
-            user: currentSession.user,
-            profile: profile as Profile
-          });
+            if (error) {
+              console.error("Error fetching profile:", error);
+            }
+
+            setSession({
+              user: currentSession.user,
+              profile: profile as Profile
+            });
+          } catch (error) {
+            console.error("Error in auth state change:", error);
+            setSession({
+              user: currentSession.user,
+              profile: undefined
+            });
+          }
         } else {
           setSession(null);
         }
@@ -44,16 +56,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // Check for existing session
     supabase.auth.getSession().then(async ({ data: { session: currentSession } }) => {
       if (currentSession) {
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', currentSession.user.id)
-          .single();
+        try {
+          const { data: profile, error } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('id', currentSession.user.id)
+            .single();
 
-        setSession({
-          user: currentSession.user,
-          profile: profile as Profile
-        });
+          if (error) {
+            console.error("Error fetching profile:", error);
+          }
+
+          setSession({
+            user: currentSession.user,
+            profile: profile as Profile
+          });
+        } catch (error) {
+          console.error("Error in get session:", error);
+          setSession({
+            user: currentSession.user,
+            profile: undefined
+          });
+        }
       }
       setLoading(false);
     });
