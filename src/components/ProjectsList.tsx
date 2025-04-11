@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "./ui/button";
-import { toast } from "./ui/sonner";
+import { toast } from "sonner";
 
 const ProjectsList = () => {
   const [projects, setProjects] = useState<any[]>([]);
