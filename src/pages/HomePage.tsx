@@ -1,61 +1,18 @@
 
 import React from "react";
-import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
 import InquireForm from "@/components/InquireForm";
 import Footer from "@/components/Footer";
+import ProjectsList from "@/components/ProjectsList";
 import { motion } from "framer-motion";
-import { Button } from "@/components/ui/button";
-import { useAuth } from "@/contexts/AuthContext";
 
 const HomePage = () => {
-  const { session } = useAuth();
-
   return (
     <div className="min-h-screen bg-white">
       <Navbar />
       <InquireForm />
       <HeroSection />
-      
-      {/* Dashboard Access Section */}
-      {session ? (
-        <motion.section 
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          transition={{ duration: 0.5 }}
-          viewport={{ once: true }}
-          className="py-12 bg-neutral-800 text-white"
-        >
-          <div className="container mx-auto px-4 text-center">
-            <h2 className="text-3xl font-bold mb-4">Welcome Back, {session.profile?.full_name || "User"}</h2>
-            <p className="mb-6 max-w-2xl mx-auto">
-              You're logged in as a {session.profile?.role}. Access your dashboard to manage your projects.
-            </p>
-            <Button asChild size="lg">
-              <Link to="/dashboard">Go to Dashboard</Link>
-            </Button>
-          </div>
-        </motion.section>
-      ) : (
-        <motion.section 
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          transition={{ duration: 0.5 }}
-          viewport={{ once: true }}
-          className="py-12 bg-neutral-800 text-white"
-        >
-          <div className="container mx-auto px-4 text-center">
-            <h2 className="text-3xl font-bold mb-4">Client Portal</h2>
-            <p className="mb-6 max-w-2xl mx-auto">
-              Access our client portal to view project updates, track progress, and communicate with our team.
-            </p>
-            <Button asChild size="lg">
-              <Link to="/auth">Sign In / Register</Link>
-            </Button>
-          </div>
-        </motion.section>
-      )}
       
       <motion.section 
         initial={{ opacity: 0 }}
@@ -95,6 +52,16 @@ const HomePage = () => {
             </div>
           </div>
         </div>
+      </motion.section>
+      
+      <motion.section 
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        transition={{ duration: 0.8 }}
+        viewport={{ once: true }}
+        className="container mx-auto px-4 py-20"
+      >
+        <ProjectsList />
       </motion.section>
       
       <motion.section 
