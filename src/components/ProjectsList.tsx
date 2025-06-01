@@ -3,14 +3,18 @@ import React, { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "./ui/button";
 import { toast } from "sonner";
+import { useAuth } from "@/contexts/AuthContext";
 
 const ProjectsList = () => {
   const [projects, setProjects] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const { user } = useAuth();
 
   useEffect(() => {
-    fetchProjects();
-  }, []);
+    if (user) {
+      fetchProjects();
+    }
+  }, [user]);
 
   const fetchProjects = async () => {
     try {
@@ -35,6 +39,16 @@ const ProjectsList = () => {
       setLoading(false);
     }
   };
+
+  if (!user) {
+    return (
+      <div className="py-8">
+        <div className="text-center py-10 bg-neutral-50 rounded-lg">
+          <p className="text-neutral-600 mb-4">Please sign in to view projects.</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="py-8">
