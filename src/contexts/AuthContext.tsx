@@ -95,19 +95,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const sendVerificationCode = async (email: string) => {
     try {
-      const response = await fetch('/functions/v1/send-verification-email', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${supabase.supabaseKey}`
-        },
-        body: JSON.stringify({ email })
+      const { data, error } = await supabase.functions.invoke('send-verification-email', {
+        body: { email }
       });
 
-      const data = await response.json();
-      
-      if (!response.ok) {
-        return { error: { message: data.error || 'Failed to send verification code' } };
+      if (error) {
+        return { error: { message: error.message || 'Failed to send verification code' } };
       }
 
       return { error: null, code: data.code };
