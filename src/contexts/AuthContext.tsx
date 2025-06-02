@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
@@ -103,7 +102,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return { error: { message: error.message || 'Failed to send verification code' } };
       }
 
-      return { error: null, code: data.code };
+      return { error: null };
     } catch (error: any) {
       return { error: { message: error.message } };
     }

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
@@ -52,7 +51,7 @@ const AuthPage = () => {
         if (error) {
           toast.error(error.message);
         } else {
-          toast.success('Account created! Please verify your email.');
+          toast.success('Account created! Please check your email for verification code.');
           setMode('verify-signup');
           await handleSendVerificationCode();
         }
@@ -96,16 +95,11 @@ const AuthPage = () => {
   const handleSendVerificationCode = async () => {
     setLoading(true);
     try {
-      const { error, code } = await sendVerificationCode(email);
+      const { error } = await sendVerificationCode(email);
       if (error) {
         toast.error(error.message);
       } else {
         toast.success('Verification code sent to your email!');
-        // For demo purposes, show the code in console
-        if (code) {
-          console.log('Verification code:', code);
-          toast.info(`Demo: Your verification code is ${code}`);
-        }
       }
     } catch (error: any) {
       toast.error('Failed to send verification code');

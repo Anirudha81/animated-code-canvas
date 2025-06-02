@@ -1,6 +1,6 @@
 
 import React from "react";
-import { Facebook, Instagram, Youtube, LogOut, User } from "lucide-react";
+import { Facebook, Instagram, Youtube, LogOut, User, Building } from "lucide-react";
 import { Button } from "./ui/button";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -36,6 +36,12 @@ const Navbar = () => {
             <Link to="/" className="text-neutral-700 hover:text-neutral-900 transition-colors hover:underline underline-offset-4">
               Amenities
             </Link>
+            {user && (
+              <Link to="/projects" className="text-neutral-700 hover:text-neutral-900 transition-colors hover:underline underline-offset-4 flex items-center space-x-1">
+                <Building className="w-4 h-4" />
+                <span>Projects</span>
+              </Link>
+            )}
           </div>
         </div>
         
