@@ -82,27 +82,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       return { error: { message: 'Invalid or expired verification code' } };
     }
 
-    // If code is valid, sign in the user directly using magic link approach
-    // This creates a passwordless sign-in
+    // If code is valid, sign in using magic link
     const { error } = await supabase.auth.signInWithOtp({
       email,
       options: {
         shouldCreateUser: false
       }
     });
-    
-    // Even if the OTP call has an error, we know the verification code was valid
-    // So we can consider this a successful verification
-    if (isValid) {
-      // Try alternative approach - create a session directly
-      const { data: { users }, error: userError } = await supabase.auth.admin.listUsers();
-      const existingUser = users?.find(u => u.email === email);
-      
-      if (existingUser) {
-        // User exists and code is verified, create session
-        return { error: null };
-      }
-    }
     
     return { error };
   };
@@ -133,6 +119,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       if (error) {
         return { error, isValid: false };
+      }
+
+      // If verification is successful, attempt to sign in the user
+      if (data) {
+        // Try to sign in with OTP to create a session
+        await supabase.auth.signInWithOtp({
+          email,
+          options: {
+            shouldCreateUser: false
+          }
+        });
       }
 
       return { error: null, isValid: data };
