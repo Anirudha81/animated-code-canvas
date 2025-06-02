@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
@@ -17,9 +18,8 @@ const AuthPage = () => {
   const [fullName, setFullName] = useState('');
   const [verificationCode, setVerificationCode] = useState('');
   const [loading, setLoading] = useState(false);
-  const [isOTPLogin, setIsOTPLogin] = useState(false);
   
-  const { signIn, signUp, signInWithOTP, sendVerificationCode, verifyEmailCode, user } = useAuth();
+  const { signIn, signUp, sendVerificationCode, verifyEmailCode, user } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -63,27 +63,18 @@ const AuthPage = () => {
     }
   };
 
-  const handleOTPAuth = async (e: React.FormEvent) => {
+  const handleEmailVerification = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      if (mode === 'verify-login') {
-        const { error } = await signInWithOTP(email, verificationCode);
-        if (error) {
-          toast.error(error.message);
-        } else {
-          toast.success('Successfully signed in!');
-          navigate('/');
-        }
-      } else if (mode === 'verify-signup') {
-        const { error, isValid } = await verifyEmailCode(email, verificationCode);
-        if (error || !isValid) {
-          toast.error('Invalid or expired verification code');
-        } else {
-          toast.success('Email verified successfully!');
-          navigate('/');
-        }
+      const { error, isValid } = await verifyEmailCode(email, verificationCode);
+      if (error || !isValid) {
+        toast.error('Invalid or expired verification code');
+      } else {
+        toast.success('Email verified successfully! You are now signed in.');
+        // Force a page refresh to update auth state
+        window.location.href = '/';
       }
     } catch (error: any) {
       toast.error('An unexpected error occurred');
@@ -151,7 +142,7 @@ const AuthPage = () => {
         </CardHeader>
         <CardContent>
           {(mode === 'verify-signup' || mode === 'verify-login') ? (
-            <form onSubmit={handleOTPAuth} className="space-y-4">
+            <form onSubmit={handleEmailVerification} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="otp">Verification Code</Label>
                 <OTPInput
