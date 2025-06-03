@@ -82,23 +82,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       return { error: { message: 'Invalid or expired verification code' } };
     }
 
-    // If code is valid, create a session by signing in with a temporary password approach
-    // Since we verified the code, we can trust this user and create a session
+    // If code is valid, sign in using OTP method
     try {
-      // Use the email and a known pattern to create a session
-      const { error: sessionError } = await supabase.auth.signInWithPassword({
+      const { error } = await supabase.auth.signInWithOtp({
         email: email,
-        password: 'temp_verified_session'
+        type: 'email'
       });
       
-      // If password login fails (expected), we'll create the session another way
-      if (sessionError) {
-        // Use RPC to create a session for verified users
-        const { data, error: rpcError } = await supabase.rpc('create_session_for_verified_user', {
-          user_email: email
+      if (error) {
+        // If OTP sign-in fails, we'll use a workaround
+        // Create a temporary session by updating the user verification status
+        const { error: updateError } = await supabase.auth.updateUser({
+          email: email,
+          data: { email_verified: true }
         });
         
-        if (rpcError) {
+        if (updateError) {
           return { error: { message: 'Failed to create session after verification' } };
         }
       }
