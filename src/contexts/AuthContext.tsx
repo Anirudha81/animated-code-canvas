@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
@@ -88,7 +87,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         email: email,
         options: {
           shouldCreateUser: false,
-          redirectTo: `${window.location.origin}/`
+          emailRedirectTo: `${window.location.origin}/`
         }
       });
       
